@@ -26,6 +26,10 @@ limitations under the License.
 #include <ESP32SharpIR.h>
 #include <QTRSensors.h>
 
+// New Changes
+#define LED 2 // ONBOARD LED
+
+
 //
 // README FIRST, README FIRST, README FIRST
 //
@@ -91,6 +95,24 @@ void setup() {
 
     // Setup the Bluepad32 callbacks
     BP32.setup(&onConnectedGamepad, &onDisconnectedGamepad);
+    // New Changes
+    pinmode(LED, OUTPUT);
+/*    The ``pinMode`` function is used to define the GPIO operation mode for a specific pin.
+
+.. code-block:: arduino
+
+    void pinMode(uint8_t pin, uint8_t mode);
+ 
+* ``pin``   defines the GPIO pin number.
+* ``mode``  sets operation mode.
+  
+The following modes are supported for the basic `input` and `output`: 
+
+* **INPUT** sets the GPIO as input without pullup or pulldown (high impedance).
+* **OUTPUT** sets the GPIO as output/read mode.
+* **INPUT_PULLDOWN** sets the GPIO as input with the internal pulldown.
+* **INPUT_PULLUP** sets the GPIO as input with the internal pullup.
+*/
 
     // "forgetBluetoothKeys()" should be called when the user performs
     // a "device factory reset", or similar.
@@ -128,6 +150,12 @@ void loop() {
     // automatically.
     BP32.update();
 
+    // New Changes
+    digitalWrite(LED, HIGH); // LED is on
+    delay(1000);
+    digitalWrite(LED, LOW); // LED is off
+    delay(1000);
+
     // It is safe to always do this before using the gamepad API.
     // This guarantees that the gamepad is valid and connected.
     for (int i = 0; i < BP32_MAX_GAMEPADS; i++) {
@@ -136,7 +164,7 @@ void loop() {
         if (myGamepad && myGamepad->isConnected()) {
 
             servo.write( ((((float) myGamepad->axisY()) / 512.0f) * 500) + 1500 );
-
+            
             // Another way to query the buttons, is by calling buttons(), or
             // miscButtons() which return a bitmask.
             // Some gamepads also have DPAD, axis and more.
