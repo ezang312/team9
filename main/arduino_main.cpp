@@ -96,7 +96,7 @@ void setup() {
     // Setup the Bluepad32 callbacks
     BP32.setup(&onConnectedGamepad, &onDisconnectedGamepad);
     // New Changes
-    pinmode(LED, OUTPUT);
+    pinMode(LED, OUTPUT);
 /*    The ``pinMode`` function is used to define the GPIO operation mode for a specific pin.
 
 .. code-block:: arduino
@@ -121,12 +121,12 @@ The following modes are supported for the basic `input` and `output`:
     // But might also fix some connection / re-connection issues.
     BP32.forgetBluetoothKeys();
 
-    ESP32PWM::allocateTimer(0);
-	ESP32PWM::allocateTimer(1);
-	ESP32PWM::allocateTimer(2);
-	ESP32PWM::allocateTimer(3);
+    // ESP32PWM::allocateTimer(0);
+	// ESP32PWM::allocateTimer(1);
+	// ESP32PWM::allocateTimer(2);
+	// ESP32PWM::allocateTimer(3);
     servo.setPeriodHertz(50);
-    servo.attach(12, 1000, 2000);
+    servo.attach(13, 1000, 2000);
 
     // Serial.begin(115200);
     // sensor1.setFilterRate(0.1f);
@@ -149,12 +149,16 @@ void loop() {
     // The gamepads pointer (the ones received in the callbacks) gets updated
     // automatically.
     BP32.update();
+    // servo.write(1000);
+    // delay(1000);
+    // servo.write(2000);
+    // delay(1000);
 
     // New Changes
-    digitalWrite(LED, HIGH); // LED is on
-    delay(1000);
-    digitalWrite(LED, LOW); // LED is off
-    delay(1000);
+    // digitalWrite(LED, HIGH); // LED is on
+    // delay(1000);
+    // digitalWrite(LED, LOW); // LED is off
+    // delay(1000);
 
     // It is safe to always do this before using the gamepad API.
     // This guarantees that the gamepad is valid and connected.
