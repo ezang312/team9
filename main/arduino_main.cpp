@@ -85,7 +85,8 @@ void onDisconnectedGamepad(GamepadPtr gp) {
     }
 }
 
-Servo servo;
+Servo servoRight;
+Servo servoLeft;
 ESP32SharpIR sensor1( ESP32SharpIR::GP2Y0A21YK0F, 27);
 QTRSensors qtr;
 
@@ -97,22 +98,7 @@ void setup() {
     BP32.setup(&onConnectedGamepad, &onDisconnectedGamepad);
     // New Changes
     pinMode(LED, OUTPUT);
-/*    The ``pinMode`` function is used to define the GPIO operation mode for a specific pin.
 
-.. code-block:: arduino
-
-    void pinMode(uint8_t pin, uint8_t mode);
- 
-* ``pin``   defines the GPIO pin number.
-* ``mode``  sets operation mode.
-  
-The following modes are supported for the basic `input` and `output`: 
-
-* **INPUT** sets the GPIO as input without pullup or pulldown (high impedance).
-* **OUTPUT** sets the GPIO as output/read mode.
-* **INPUT_PULLDOWN** sets the GPIO as input with the internal pulldown.
-* **INPUT_PULLUP** sets the GPIO as input with the internal pullup.
-*/
 
     // "forgetBluetoothKeys()" should be called when the user performs
     // a "device factory reset", or similar.
@@ -125,9 +111,10 @@ The following modes are supported for the basic `input` and `output`:
 	// ESP32PWM::allocateTimer(1);
 	// ESP32PWM::allocateTimer(2);
 	// ESP32PWM::allocateTimer(3);
-    servo.setPeriodHertz(50);
-    servo.attach(13, 1000, 2000);
-
+    servoRight.setPeriodHertz(50);
+    servoRight.attach(13, 1000, 2000);
+    servoLeft.setPeriodHertz(50);
+    servoLeft.attach(14, 1000, 2000);
     // Serial.begin(115200);
     // sensor1.setFilterRate(0.1f);
 
@@ -148,11 +135,35 @@ void loop() {
     // Just call this function in your main loop.
     // The gamepads pointer (the ones received in the callbacks) gets updated
     // automatically.
+    
+
     BP32.update();
-    // servo.write(1000);
-    // delay(1000);
-    // servo.write(2000);
-    // delay(1000);
+
+    // PAUSE FOR TESTING
+    servoRight.write(1500);
+    servoLeft.write(1500);
+    delay(3000); // no movement for 3 seconds
+
+    // Both wheels go forward
+    servoRight.write(1250); //clockwise, cw, "forward"
+    servoLeft.write(1250); //counterclockwise, ccw, "forwards"
+    delay(10000); // forward for 10 secons
+
+    // // Left turn
+    // servoRight.write(1250); //clockwise, cw, "forward"
+    // servoLeft.write(1750); //clockwise, cw, "backward"
+    // delay(5000);
+  
+
+    // // Right turn
+    // servoRight.write(1750); //counterclockwise, ccw, "backward"
+    // servoLeft.write(1250); //counterclockwise, ccw, "forward"
+    // delay(5000);
+  
+    // // Backward
+    // servoRight.write(1750);
+    // servoLeft.write(1750);
+    // delay(5000);
 
     // New Changes
     // digitalWrite(LED, HIGH); // LED is on
@@ -167,7 +178,7 @@ void loop() {
 
         if (myGamepad && myGamepad->isConnected()) {
 
-            servo.write( ((((float) myGamepad->axisY()) / 512.0f) * 500) + 1500 );
+            // servo.write( ((((float) myGamepad->axisY()) / 512.0f) * 500) + 1500 );
             
             // Another way to query the buttons, is by calling buttons(), or
             // miscButtons() which return a bitmask.
