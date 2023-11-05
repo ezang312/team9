@@ -23,26 +23,20 @@ limitations under the License.
 #include <Bluepad32.h>
 
 #include <ESP32Servo.h>
+// for Distance sensor
 #include <ESP32SharpIR.h>
-#include <QTRSensors.h>
+// #include <QTRSensors.h>
+
+// For Servos
+#include "servos.h"
+
+// For maze, line, color
+#include "maze.h"
+#include "line.h"
+#include "color.h"
 
 // New Changes
 #define LED 2 // ONBOARD LED
-
-
-//
-// README FIRST, README FIRST, README FIRST
-//
-// Bluepad32 has a built-in interactive console.
-// By default it is enabled (hey, this is a great feature!).
-// But it is incompatible with Arduino "Serial" class.
-//
-// Instead of using "Serial" you can use Bluepad32 "Console" class instead.
-// It is somewhat similar to Serial but not exactly the same.
-//
-// Should you want to still use "Serial", you have to disable the Bluepad32's console
-// from "sdkconfig.defaults" with:
-//    CONFIG_BLUEPAD32_USB_CONSOLE_ENABLE=n
 
 GamepadPtr myGamepads[BP32_MAX_GAMEPADS];
 
@@ -52,12 +46,6 @@ void onConnectedGamepad(GamepadPtr gp) {
     bool foundEmptySlot = false;
     for (int i = 0; i < BP32_MAX_GAMEPADS; i++) {
         if (myGamepads[i] == nullptr) {
-            // Console.printf("CALLBACK: Gamepad is connected, index=%d\n", i);
-            // Additionally, you can get certain gamepad properties like:
-            // Model, VID, PID, BTAddr, flags, etc.
-            // GamepadProperties properties = gp->getProperties();
-            // Console.printf("Gamepad model: %s, VID=0x%04x, PID=0x%04x\n", gp->getModelName(), properties.vendor_id,
-            //                properties.product_id);
             myGamepads[i] = gp;
             foundEmptySlot = true;
             break;
@@ -85,48 +73,31 @@ void onDisconnectedGamepad(GamepadPtr gp) {
     }
 }
 
-Servo servoRight;
-Servo servoLeft;
 ESP32SharpIR sensor1( ESP32SharpIR::GP2Y0A21YK0F, 27);
-QTRSensors qtr;
 
 // Arduino setup function. Runs in CPU 1
 void setup() {
-    // Console.printf("Firmware: %s\n", BP32.firmwareVersion());
-
     // Setup the Bluepad32 callbacks
     BP32.setup(&onConnectedGamepad, &onDisconnectedGamepad);
     // New Changes
     pinMode(LED, OUTPUT);
 
 
-    // "forgetBluetoothKeys()" should be called when the user performs
-    // a "device factory reset", or similar.
-    // Calling "forgetBluetoothKeys" in setup() just as an example.
-    // Forgetting Bluetooth keys prevents "paired" gamepads to reconnect.
-    // But might also fix some connection / re-connection issues.
+    // should be called when  user performs a "device factory reset", or similar
+    // prevents "paired" gamepads to reconnect but might also fix connection issues
     BP32.forgetBluetoothKeys();
 
     // ESP32PWM::allocateTimer(0);
 	// ESP32PWM::allocateTimer(1);
 	// ESP32PWM::allocateTimer(2);
 	// ESP32PWM::allocateTimer(3);
-    servoRight.setPeriodHertz(50);
-    servoRight.attach(13, 1000, 2000);
-    servoLeft.setPeriodHertz(50);
-    servoLeft.attach(14, 1000, 2000);
-    // Serial.begin(115200);
-    // sensor1.setFilterRate(0.1f);
-
-    // qtr.setTypeRC(); // or setTypeAnalog()
-    // qtr.setSensorPins((const uint8_t[]) {12,13,14}, 3);
-    // for (uint8_t i = 0; i < 250; i++)
-    // {
-    //     Serial.println("calibrating");
-    //     qtr.calibrate();
-    //     delay(20);
-    // }
-    // qtr.calibrate();
+    
+    servoSetup();
+    lineSetup();
+    // mazeSetup();
+    Serial.println("Setup line follow");
+    // colorSetup();
+    
 }
 
 // Arduino loop function. Runs in CPU 1
@@ -136,34 +107,7 @@ void loop() {
     // The gamepads pointer (the ones received in the callbacks) gets updated
     // automatically.
     
-
     BP32.update();
-
-    // PAUSE FOR TESTING
-    servoRight.write(1500);
-    servoLeft.write(1500);
-    delay(3000); // no movement for 3 seconds
-
-    // Both wheels go forward
-    servoRight.write(1250); //clockwise, cw, "forward"
-    servoLeft.write(1250); //counterclockwise, ccw, "forwards"
-    delay(10000); // forward for 10 secons
-
-    // // Left turn
-    // servoRight.write(1250); //clockwise, cw, "forward"
-    // servoLeft.write(1750); //clockwise, cw, "backward"
-    // delay(5000);
-  
-
-    // // Right turn
-    // servoRight.write(1750); //counterclockwise, ccw, "backward"
-    // servoLeft.write(1250); //counterclockwise, ccw, "forward"
-    // delay(5000);
-  
-    // // Backward
-    // servoRight.write(1750);
-    // servoLeft.write(1750);
-    // delay(5000);
 
     // New Changes
     // digitalWrite(LED, HIGH); // LED is on
@@ -205,20 +149,14 @@ void loop() {
 
     // Serial.println(sensor1.getDistanceFloat());
 
-    // uint16_t sensors[3];
-    // int16_t position = qtr.readLineBlack(sensors);
-    // int16_t error = position - 1000;
-    // if (error < 0)
-    // {
-    //     Serial.println("On the left");
-    // }
-    // if (error > 0)
-    // {
-    //     Serial.println("On the right");
-    // }
-    // if(error == 0){
-    //     Serial.println("Straight Ahead");  
-    // }
+    // line sensor
+    Serial.println("Following the line now");
+    followLine();
+
+    // forwards(1000);
+    // rightTurn(1000);
+    // leftTurn(1000);
+
+
     vTaskDelay(1);
-    // delay(100);
 }
