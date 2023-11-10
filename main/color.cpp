@@ -18,6 +18,7 @@
 
 TwoWire I2C_0 = TwoWire(0);
 APDS9960 apds = APDS9960(I2C_0, APDS9960_INT);
+bool firstColorFound = false;
 
 void colorSetup() {
     //I2C protocol
@@ -30,7 +31,9 @@ void colorSetup() {
 }
 
 void color() {
-    int r, g, b, a; //How much red, green, and blue + (ambiguous)
+    // Eric's color code
+    int storedR, storedG, storedB, storedA; // How much red, green, and blue + (ambiguous) in first color detected
+    int newR, newG, newB, newA; // will have values of next colors detected
     //Move? until colour is read
     // while (!apds.colorAvailable()) {
     //     delay(5);
@@ -54,5 +57,48 @@ void color() {
     // servoRight.write(1500);
     // servoLeft.write(1500);
     // delay(3000); // no movement for 3 seconds
+
+
+    // Get first color
+    if (!apds.colorAvailable() && !firstColorFound) {
+        forwards(5);
+    } else {
+        stop(100);
+        firstColorFound = true;
+
+        apds.readColor(storedR, storedG, storedB, storedA);
+
+        Serial.println("\nFirst color found");
+        // print color
+        Serial.printf("RED: %d\n", storedR);
+        Serial.printf("GREEN: %d\n", storedG);
+        Serial.printf("BLUE: %d\n", storedB);
+        Serial.printf("AMBIENT: %d\n", storedA);
+        forwards(5);
+    }
+
+    // Get other colors and compare
+    if (!apds.colorAvailable() && firstColorFound) {
+        forwards(5);
+    } else {
+        stop(100);
+
+        apds.readColor(newR, newG, newB, newA);
+
+        // print color
+        Serial.println("\n\nNEW COLOR FOUND:");
+        Serial.printf("RED: %d\n", newR);
+        Serial.printf("GREEN: %d\n", newG);
+        Serial.printf("BLUE: %d\n", newB);
+        Serial.printf("AMBIENT: %d\n\n", newA);
+
+        // A match has been found!
+        if ((storedR == newR) && (storedG == newG) && (storedB == newB) && (storedA == newA)) {
+            Serial.println("Color found!");
+        }
+    }
+
+    
+
     
 }

@@ -6,10 +6,8 @@ QTRSensors qtr;
 void lineSetup() {
 // Setup for line sensor
     Serial.begin(115200);
-    // sensor1.setFilterRate(0.1f);
     qtr.setTypeAnalog();
     qtr.setSensorPins((const uint8_t[]) {33, 32, 35}, 3);
-    // qtr.setSensorPins((const uint8_t[]) {12,13,14}, 3);
     // callibration sequence
     for (uint8_t i = 0; i < 150; i++) {
         Serial.print("calibrating: ");
