@@ -6,6 +6,6 @@
 #include <ArduinoGamepad.h>
 
 void lineSetup();
-int followLine(GamepadPtr controller, bool& aButtonPressed, bool& bButtonPressed, bool& xButtonPressed);
+int followLine(GamepadPtr controller, bool& aButtonPressed, bool& bButtonPressed, bool& xButtonPressed, bool& yButtonPressed);
 
 #endif

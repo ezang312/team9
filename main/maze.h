@@ -5,7 +5,7 @@
 #include <ArduinoGamepad.h>
 
 void mazeSetup();
-void navigateMaze(GamepadPtr controller, bool& aButtonPressed, bool& bButtonPressed, bool& xButtonPressed);
+void navigateMaze(GamepadPtr controller, bool& aButtonPressed, bool& bButtonPressed, bool& xButtonPressed, bool& yButtonPressed);
 
 
 #endif

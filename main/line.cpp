@@ -18,7 +18,7 @@ void lineSetup() {
     // qtr.calibrate();
 }
 
-int followLine(GamepadPtr controller, bool& aButtonPressed, bool& bButtonPressed, bool& xButtonPressed) {
+int followLine(GamepadPtr controller, bool& aButtonPressed, bool& bButtonPressed, bool& xButtonPressed, bool& yButtonPressed) {
     uint16_t sensors[3];
     int16_t position = qtr.readLineBlack(sensors);
     Serial.print("Position: ");

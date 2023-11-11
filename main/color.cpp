@@ -4,6 +4,7 @@
 // Then test the next three strips to find one that matches the first strip.
 
 #include <Wire.h>
+#include <Arduino.h>
 #include <Arduino_APDS9960.h>
 #include <iostream>
 #include "color.h"
@@ -17,6 +18,8 @@
 #define I2C_FREQ 100000
 
 #define LED 2
+int firstColor = 0;
+int secondColor = 0;
 
 TwoWire I2C_0 = TwoWire(0);
 APDS9960 apds = APDS9960(I2C_0, APDS9960_INT);
@@ -32,103 +35,48 @@ void colorSetup() {
     Serial.begin(115200);
 }
 
-void color() {
+void color(GamepadPtr controller, bool& aButtonPressed, bool& bButtonPressed, bool& xButtonPressed, bool& yButtonPressed) {
     // Eric's color code
-        // firstColor = colorDetected();
-        //     Serial.printf("%d", firstColor);
+    firstColor = colorDetected();
+    Serial.printf("%d\n", firstColor);
 
-        //     for (int i = 0; i < firstColor; i++){
-        //         digitalWrite(LED, HIGH);
-        //         delay(1000);
-        //         digitalWrite(LED, LOW);
-        //         delay(1000);
-        //     }
+    for (int i = 0; i < firstColor; i++){
+        Serial.println("flashing\n");
+        digitalWrite(LED, HIGH);
+        delay(1000);
+        digitalWrite(LED, LOW);
+        delay(1000);
+    }
 
-        //     forwards(5000);
-        //     stop(1000);
+    forwards(5000);
+    stop(1000);
 
-        //     while (firstColor != secondColor && firstColor != 0) {
-        //         secondColor = colorDetected();
-        //         if (secondColor == firstColor){
+    while (firstColor != secondColor && firstColor != 0) {
+        secondColor = colorDetected();
+        if (secondColor == firstColor){
 
-        //             stop(100000);
-        //         }
-        //         else {
-        //             forwards(100);
-        //             stop(100);
-        //         }
-        //     }    
-    // int storedR, storedG, storedB, storedA; // How much red, green, and blue + (ambiguous) in first color detected
-    // int newR, newG, newB, newA; // will have values of next colors detected
-    // int resultFirst = 0;
-    // int resultSecond = 0;
+            stop(10000);
+        }
+        else {
+            forwards(100);
+            stop(100);
+        }
+    }   
 
-    // forwards(1000);
-    // stop(1000);
+    if (controller->b()) {
+        bButtonPressed = true;
+        aButtonPressed = false;
+    }
 
-    // // Get first color
-    // if (apds.colorAvailable() && !firstColorFound) {
+    if (controller->x()) {
+        xButtonPressed = true;
+        aButtonPressed = false;
+    }
 
-    //     apds.readColor(storedR, storedG, storedB, storedA);
-
-    //     Serial.println("\nFirst color found");
-    //     // print color
-    //     Serial.printf("RED: %d\n", storedR);
-    //     Serial.printf("GREEN: %d\n", storedG);
-    //     Serial.printf("BLUE: %d\n", storedB);
-    //     Serial.printf("AMBIENT: %d\n", storedA);
-
-    //     if (storedR > storedG + 20 && storedR > storedB + 20) {
-    //         resultFirst = 1;
-    //         firstColorFound = true;
-    //     }
-    //     if (storedG > storedR + 20 && storedG > storedB + 20) {
-    //         resultFirst = 2;
-    //         firstColorFound = true;
-    //     }
-    //     if (storedB > storedR + 20 && storedB > storedG + 20) {
-    //         resultFirst = 3;
-    //         firstColorFound = true;
-    //     }
-    //     delay(10000);
-
-    //     for (int i = 0; i < resultFirst; i++) {
-    //         digitalWrite(LED, HIGH);
-    //         delay(1000);
-    //         digitalWrite(LED, LOW);
-    //         delay(1000);
-    //     }
-    // }
-
-    // // Get other colors and compare
-    // if (apds.colorAvailable() && firstColorFound) {
-
-    //     apds.readColor(newR, newG, newB, newA);
-
-    //     // print color
-    //     Serial.println("\n\nNEW COLOR FOUND:");
-    //     Serial.printf("RED: %d\n", newR);
-    //     Serial.printf("GREEN: %d\n", newG);
-    //     Serial.printf("BLUE: %d\n", newB);
-    //     Serial.printf("AMBIENT: %d\n\n", newA);
-    //     delay(10000);
-
-    //     if (newR > newG && newR > newB) {
-    //         resultSecond = 1;
-    //     }
-    //     if (newG > newR && newG > newB) {
-    //         resultSecond = 2;
-    //     }
-    //     if (newB > newR && newB > newG) {
-    //         resultSecond = 3;
-    //     }
-    // }
-
-    // if (resultFirst == resultSecond && resultFirst != 0) {
-    //     Serial.println("Color found!");
-    //     stop(10000);
-    // }
-
+    if (controller->y()) {
+        yButtonPressed = true;
+        aButtonPressed = false;
+    }
 }
 
 int colorDetected() {

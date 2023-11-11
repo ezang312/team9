@@ -13,7 +13,7 @@ void mazeSetup() {
     frontIR.setFilterRate(0.1f);
 }
 
-void navigateMaze(GamepadPtr controller, bool& aButtonPressed, bool& bButtonPressed, bool& xButtonPressed) {
+void navigateMaze(GamepadPtr controller, bool& aButtonPressed, bool& bButtonPressed, bool& xButtonPressed, bool& yButtonPressed) {
 
     // Eric's Maze code:'
     Serial.println(frontIR.getDistanceFloat());
@@ -52,6 +52,11 @@ void navigateMaze(GamepadPtr controller, bool& aButtonPressed, bool& bButtonPres
 
     if (controller->x()) {
         xButtonPressed = true;
+        bButtonPressed = false;
+    }
+
+    if (controller->y()) {
+        yButtonPressed = true;
         bButtonPressed = false;
     }
 }

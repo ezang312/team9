@@ -37,8 +37,6 @@ limitations under the License.
 
 // New Changes
 #define LED 2 // ONBOARD LED
-int firstColor = 0;
-int secondColor = 0;
 
 GamepadPtr myGamepads[BP32_MAX_GAMEPADS];
 
@@ -90,12 +88,6 @@ void setup() {
     // lights up LED
     pinMode(LED, OUTPUT);
 
-    // ESP32PWM::allocateTimer(0);
-	// ESP32PWM::allocateTimer(1);
-	// ESP32PWM::allocateTimer(2);
-	// ESP32PWM::allocateTimer(3);
-
-
     servoSetup();
     lineSetup();
     mazeSetup();
@@ -110,6 +102,7 @@ GamepadPtr myGamepad;
 bool aPressed = false;
 bool bPressed = false;
 bool xPressed = false;
+bool yPressed = false;
 
 // Arduino loop function. Runs in CPU 1
 void loop() {
@@ -121,11 +114,6 @@ void loop() {
     
     BP32.update();
 
-    // digitalWrite(RGBLED, HIGH);
-    // delay(1000);
-    // digitalWrite(RGBLED, LOW);
-    // delay(1000);
-
     
 
     //It is safe to always do this before using the gamepad API.
@@ -135,7 +123,7 @@ void loop() {
 
         if (myGamepad && myGamepad->isConnected()) {
 
-            Serial.println("Gamepad connected!");
+            // Serial.println("Gamepad connected!");
 
             //servo.write( ((((float) myGamepad->axisY()) / 512.0f) * 500) + 1500 );
             
@@ -159,47 +147,38 @@ void loop() {
             //You can query the axis and other properties as well. See Gamepad.h
             //For all the available functions.
 
-            // currentBitmask = myGamepad->buttons();
 
-            // Serial.printf("dpad: %x     ", myGamepad->dpad());
-            // Serial.printf("butons: %x\n", myGamepad->buttons());
-
-            if (myGamepad->y()) {
+            if (myGamepad->r2()) {
+                // color
                 aPressed = myGamepad->a();
+                // maze
                 bPressed = myGamepad->b();
+                // line
                 xPressed = myGamepad->x();
+                // shoot
+                yPressed = myGamepad->y();
             }
 
             if (aPressed) {
-                Serial.println("Doing color now");
-
-                // check to see if other buttons have been pressed
-                Serial.println("checking for other button pressed");
-                bPressed = myGamepad->b();
-                xPressed = myGamepad->x();
-
-                Serial.printf("buttons: %x\n", myGamepad->buttons());
-
-                if (myGamepad->b()) {
-                    aPressed = false;
-                    bPressed = true;
-                    break;
-                } else if (myGamepad->x()) {
-                    aPressed = false;
-                    xPressed = true;
-                    break;
-                }
+                // Serial.println("Doing color now");
+                color(myGamepad, aPressed, bPressed, xPressed, yPressed);
             }
 
             if (bPressed) {
-                Serial.println("Navigating the maze now");
-                navigateMaze(myGamepad, aPressed, bPressed, xPressed);
+                // Serial.println("Navigating the maze now");
+                navigateMaze(myGamepad, aPressed, bPressed, xPressed, yPressed);
             }
     
             if (xPressed) {
                 // line sensor
-                Serial.println("Following the line now");
-                followLine(myGamepad, aPressed, bPressed, xPressed);
+                // Serial.println("Following the line now");
+                followLine(myGamepad, aPressed, bPressed, xPressed, yPressed);
+            }
+
+            if (yPressed) {
+                // shooting code
+                Serial.println("You can now move robot with joystick to shoot");
+
             }
         }
 

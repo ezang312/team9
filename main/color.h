@@ -2,9 +2,10 @@
 #define _COLOR_H_
 
 #include <Arduino.h>
+#include <ArduinoGamepad.h>
 
 void colorSetup();
-void color();
+void color(GamepadPtr controller, bool& aButtonPressed, bool& bButtonPressed, bool& xButtonPressed, bool& yButtonPressed);
 int colorDetected();
 
 #endif
