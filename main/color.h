@@ -5,5 +5,6 @@
 
 void colorSetup();
 void color();
+int colorDetected();
 
 #endif

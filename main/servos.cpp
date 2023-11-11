@@ -53,11 +53,11 @@ void leftTurn(int duration) {
 // slight adjustment to one wheel
 void adjust(String direction) {
     if (direction == "left") {
-        servoRight.write(1375); // Move slighty to the left
-        delay(7);
+        servoRight.write(1625); // Move slighty to the left
+        delay(50);
     } else if (direction == "right") {
         servoLeft.write(1375); // Move slighty to the right
-        delay(7);
+        delay(50);
     } else {
         Serial.println("invalid input");
     }

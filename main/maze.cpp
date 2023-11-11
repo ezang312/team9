@@ -23,36 +23,33 @@ void navigateMaze() {
     // servoLeft.write(1500);
     // delay(100);
 
-    // Eric's Maze code:
-    if(frontIR.getDistanceFloat() < 12.0) { //If front gets too close to wall    
+    // Eric's Maze code:'
+    Serial.println(frontIR.getDistanceFloat());
+    //Serial.println(leftIR.getDistanceFloat());
+    //Serial.println(rightIR.getDistanceFloat());
+    forwards(250);
+    if(frontIR.getDistanceFloat() < 16.0) { //If front gets too close to wall   
+ 
         if(leftIR.getDistanceFloat() > 20.0) { //There is open space on the left, turn left
             Serial.println("Turn Left");
-            leftTurn(1000);
+            leftTurn(1100);
+            stop(100);
         } else if (rightIR.getDistanceFloat() > 20.0) { //Check right side, if open space, turn right
             Serial.println("Turn Right");
-            rightTurn(1000);
-        // DEAD END WILL NEVER HAPPEN //
-        // } else { //Dead end, turn around
-        //     Serial.println("Turn Around");
-        //     servoRight.write(1750);
-        //     servoLeft.write(1250);   
-        //     delay(2000);
+            rightTurn(1100);
+            stop(100);
         }
     }
 
-    if(leftIR.getDistanceFloat() < 12.0) { //If left side gets too close to wall    
+    if(leftIR.getDistanceFloat() < 11.0) { //If left side gets too close to wall    
         Serial.println("Adjust left");
         adjust("left");
-        // servoLeft.write(1250); //Move slighty to the right
-        // delay(50);
+        stop(10);
     }
 
-    if(rightIR.getDistanceFloat() < 12.0) { //If right side gets too close to wall    
+    if(rightIR.getDistanceFloat() < 11.0) { //If right side gets too close to wall    
         Serial.println("Adjust right");
         adjust("right");
-        // servoRight.write(1250); 
-        // delay(50);
-        //servoRight.write(100); //Move slighty to the left
+        stop(10);
     }
-
 }
