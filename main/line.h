@@ -3,9 +3,9 @@
 
 #include <Arduino.h>
 #include <QTRSensors.h>
+#include <ArduinoGamepad.h>
 
 void lineSetup();
-
-void followLine();
+int followLine(GamepadPtr controller, bool& aButtonPressed, bool& bButtonPressed, bool& xButtonPressed);
 
 #endif

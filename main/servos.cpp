@@ -6,12 +6,15 @@ servo.write() set a speed and direction for your motors, 1000 = maximum speed in
 */
     Servo servoRight;
     Servo servoLeft;
+    Servo servoCap;
 
 void servoSetup() {
     servoRight.setPeriodHertz(50);
     servoRight.attach(13, 1000, 2000);
     servoLeft.setPeriodHertz(50);
     servoLeft.attach(14, 1000, 2000);
+    servoCap.setPeriodHertz(50);
+    servoCap.attach(4, 1000, 2000);
 }
 
 // Both wheels go forward
@@ -53,7 +56,7 @@ void leftTurn(int duration) {
 // slight adjustment to one wheel
 void adjust(String direction) {
     if (direction == "left") {
-        servoRight.write(1625); // Move slighty to the left
+        servoRight.write(1375); // Move slighty to the left
         delay(50);
     } else if (direction == "right") {
         servoLeft.write(1375); // Move slighty to the right
@@ -68,4 +71,12 @@ void stop(int duration) {
     servoRight.write(1500);
     servoLeft.write(1500);
     delay(duration);
+}
+
+//Shoot
+void shoot(int duration) {
+    servoCap.write(1400);
+    delay(duration);
+    servoCap.write(1500);
+    delay(1000);
 }

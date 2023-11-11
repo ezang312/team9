@@ -15,5 +15,6 @@ void leftTurn(int duration);
 void adjust(String direction);
 
 void stop(int duration);
+void shoot(int duration);
 
 #endif

@@ -13,15 +13,7 @@ void mazeSetup() {
     frontIR.setFilterRate(0.1f);
 }
 
-void navigateMaze(Controller controller, bool& aButtonPressed, bool& bButtonPressed, bool& xButtonPressed) {
-    // Idk what this part is for, but it's in the github
-    // Serial.println(frontIR.getDistanceFloat());
-    // servoRight.write(1000);
-    // servoLeft.write(1250);
-    // delay(100);
-    // servoRight.write(1500);
-    // servoLeft.write(1500);
-    // delay(100);
+void navigateMaze(GamepadPtr controller, bool& aButtonPressed, bool& bButtonPressed, bool& xButtonPressed) {
 
     // Eric's Maze code:'
     Serial.println(frontIR.getDistanceFloat());
@@ -42,14 +34,14 @@ void navigateMaze(Controller controller, bool& aButtonPressed, bool& bButtonPres
     }
 
     if(leftIR.getDistanceFloat() < 11.0) { //If left side gets too close to wall    
-        Serial.println("Adjust left");
-        adjust("left");
+        Serial.println("Adjust right");
+        adjust("right");
         stop(10);
     }
 
     if(rightIR.getDistanceFloat() < 11.0) { //If right side gets too close to wall    
-        Serial.println("Adjust right");
-        adjust("right");
+        Serial.println("Adjust left");
+        adjust("left");
         stop(10);
     }
     

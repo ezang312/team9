@@ -21,7 +21,6 @@ limitations under the License.
 
 #include <Arduino.h>
 #include <Bluepad32.h>
-#include <ArduinoController.h>
 
 #include <ESP32Servo.h>
 // for Distance sensor
@@ -80,6 +79,7 @@ void onDisconnectedGamepad(GamepadPtr gp) {
 
 // Arduino setup function. Runs in CPU 1
 void setup() {
+    Serial.println("In setup");
     // Setup the Bluepad32 callbacks
     BP32.setup(&onConnectedGamepad, &onDisconnectedGamepad);
 
@@ -107,12 +107,13 @@ void setup() {
 
 GamepadPtr myGamepad;
 
-bool aPressed = myGamepad->a();
-bool bPressed = myGamepad->b();
-bool xPressed = myGamepad->x();
+bool aPressed = false;
+bool bPressed = false;
+bool xPressed = false;
 
 // Arduino loop function. Runs in CPU 1
 void loop() {
+
     // This call fetches all the gamepad info from the NINA (ESP32) module.
     // Just call this function in your main loop.
     // The gamepads pointer (the ones received in the callbacks) gets updated
@@ -120,128 +121,91 @@ void loop() {
     
     BP32.update();
 
+    // digitalWrite(RGBLED, HIGH);
+    // delay(1000);
+    // digitalWrite(RGBLED, LOW);
+    // delay(1000);
+
     
 
-    // //It is safe to always do this before using the gamepad API.
-    // //This guarantees that the gamepad is valid and connected.
-    // for (int i = 0; i < BP32_MAX_GAMEPADS; i++) {
-    //     myGamepad = myGamepads[i];
+    //It is safe to always do this before using the gamepad API.
+    //This guarantees that the gamepad is valid and connected.
+    for (int i = 0; i < BP32_MAX_GAMEPADS; i++) {
+        myGamepad = myGamepads[i];
 
-    //     if (myGamepad && myGamepad->isConnected()) {
+        if (myGamepad && myGamepad->isConnected()) {
 
-    //         Serial.println("Gamepad connected!");
+            Serial.println("Gamepad connected!");
 
-    //         //servo.write( ((((float) myGamepad->axisY()) / 512.0f) * 500) + 1500 );
+            //servo.write( ((((float) myGamepad->axisY()) / 512.0f) * 500) + 1500 );
             
-    //         //Another way to query the buttons, is by calling buttons(), or
-    //         //miscButtons() which return a bitmask.
-    //         // Serial.printf(
-    //         //     "idx=%d, dpad: 0x%02x, buttons: 0x%04x, axis L: %4d, %4d, axis R: %4d, "
-    //         //     "%4d, brake: %4d, throttle: %4d, misc: 0x%02x\n",
-    //         //     i,                        // Gamepad Index
-    //         //     myGamepad->dpad(),        // DPAD
-    //         //     myGamepad->buttons(),     // bitmask of pressed buttons
-    //         //     myGamepad->axisX(),       // (-511 - 512) left X Axis
-    //         //     myGamepad->axisY(),       // (-511 - 512) left Y axis
-    //         //     myGamepad->axisRX(),      // (-511 - 512) right X axis
-    //         //     myGamepad->axisRY(),      // (-511 - 512) right Y axis
-    //         //     myGamepad->brake(),       // (0 - 1023): brake button
-    //         //     myGamepad->throttle(),    // (0 - 1023): throttle (AKA gas) button
-    //         //     myGamepad->miscButtons()  // bitmak of pressed "misc" buttons
-    //         // );
+            //Another way to query the buttons, is by calling buttons(), or
+            //miscButtons() which return a bitmask.
+            // Serial.printf(
+            //     "idx=%d, dpad: 0x%02x, buttons: 0x%04x, axis L: %4d, %4d, axis R: %4d, "
+            //     "%4d, brake: %4d, throttle: %4d, misc: 0x%02x\n",
+            //     i,                        // Gamepad Index
+            //     myGamepad->dpad(),        // DPAD
+            //     myGamepad->buttons(),     // bitmask of pressed buttons
+            //     myGamepad->axisX(),       // (-511 - 512) left X Axis
+            //     myGamepad->axisY(),       // (-511 - 512) left Y axis
+            //     myGamepad->axisRX(),      // (-511 - 512) right X axis
+            //     myGamepad->axisRY(),      // (-511 - 512) right Y axis
+            //     myGamepad->brake(),       // (0 - 1023): brake button
+            //     myGamepad->throttle(),    // (0 - 1023): throttle (AKA gas) button
+            //     myGamepad->miscButtons()  // bitmak of pressed "misc" buttons
+            // );
 
-    //         //You can query the axis and other properties as well. See Gamepad.h
-    //         //For all the available functions.
+            //You can query the axis and other properties as well. See Gamepad.h
+            //For all the available functions.
 
-    //         // currentBitmask = myGamepad->buttons();
+            // currentBitmask = myGamepad->buttons();
 
-    //         // Serial.printf("dpad: %x     ", myGamepad->dpad());
-    //         // Serial.printf("butons: %x\n", myGamepad->buttons());
+            // Serial.printf("dpad: %x     ", myGamepad->dpad());
+            // Serial.printf("butons: %x\n", myGamepad->buttons());
 
+            if (myGamepad->y()) {
+                aPressed = myGamepad->a();
+                bPressed = myGamepad->b();
+                xPressed = myGamepad->x();
+            }
 
-    //         if (aPressed) {
-    //             Serial.println("Doing color now");
+            if (aPressed) {
+                Serial.println("Doing color now");
 
-    //             // check to see if other buttons have been pressed
-    //             Serial.println("checking for other button pressed");
-    //             bPressed = myGamepad->b();
-    //             xPressed = myGamepad->x();
-    //             // aPressed = myGamepad->a();
+                // check to see if other buttons have been pressed
+                Serial.println("checking for other button pressed");
+                bPressed = myGamepad->b();
+                xPressed = myGamepad->x();
 
-    //             // Serial.print("aPressed: ");
-    //             // Serial.print(aPressed);
-    //             // Serial.print("      bPressed: ");
-    //             // Serial.print(bPressed);
-    //             // Serial.print("      xPressed: ");
-    //             // Serial.println(xPressed);
+                Serial.printf("buttons: %x\n", myGamepad->buttons());
 
-    //             Serial.printf("buttons: %x\n", myGamepad->buttons());
+                if (myGamepad->b()) {
+                    aPressed = false;
+                    bPressed = true;
+                    break;
+                } else if (myGamepad->x()) {
+                    aPressed = false;
+                    xPressed = true;
+                    break;
+                }
+            }
 
-
-    //             if (myGamepad->b()) {
-    //                 aPressed = false;
-    //                 bPressed = true;
-    //                 break;
-    //             } else if (myGamepad->x()) {
-    //                 aPressed = false;
-    //                 xPressed = true;
-    //                 break;
-    //             }
-    //         }
-
-    //         if (bPressed) {
-    //             Serial.println("Navigating the maze now");
-    //             navigateMaze(controller, aPressed, bPressed, xPressed);
-
-    //             // check to see if other buttons have been pressed
-    //             // if (aPressed) {
-    //             //     bPressed = false;
-    //             // } else if (myGamepad->x()) {
-    //             //     xPressed = true;
-    //             //     bPressed = false;
-    //             // }
-    //         }
+            if (bPressed) {
+                Serial.println("Navigating the maze now");
+                navigateMaze(myGamepad, aPressed, bPressed, xPressed);
+            }
     
-    //         if (xPressed) {
-    //             // line sensor
-    //             Serial.println("Following the line now");
-    //             followLine(controller, aPressed, bPressed, xPressed);
-    //             // check to see if other buttons have been pressed
-    //             // aPressed = myGamepad->a();
-    //             // bPressed = myGamepad->b();
+            if (xPressed) {
+                // line sensor
+                Serial.println("Following the line now");
+                followLine(myGamepad, aPressed, bPressed, xPressed);
+            }
+        }
 
-    //             // if (aPressed || bPressed) {
-    //             //     xPressed = false;
-    //             // }
-    //         }
-    //     }
+    }
 
-    // }
-
-    shoot(1000);
+    // shoot(1000);
 
     vTaskDelay(1);
 }
-
-// Template for passing in by reference
-// bool APDS9960::readColor(int& r, int& g, int& b, int& c) {
-//   uint16_t colors[4];
-
-//   if (!readCDATAL((uint8_t *)colors, sizeof(colors))) {
-//     r = -1;
-//     g = -1;
-//     b = -1;
-//     c = -1;
-
-//     return false;
-//   }
-
-//   c = colors[0];
-//   r = colors[1];
-//   g = colors[2];
-//   b = colors[3];
-
-//   disableColor();
-
-//   return true;
-// }
