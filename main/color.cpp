@@ -34,76 +34,100 @@ void colorSetup() {
 
 void color() {
     // Eric's color code
-    int storedR, storedG, storedB, storedA; // How much red, green, and blue + (ambiguous) in first color detected
-    int newR, newG, newB, newA; // will have values of next colors detected
-    int resultFirst = 0;
-    int resultSecond = 0;
+        // firstColor = colorDetected();
+        //     Serial.printf("%d", firstColor);
 
-    forwards(1000);
-    stop(1000);
+        //     for (int i = 0; i < firstColor; i++){
+        //         digitalWrite(LED, HIGH);
+        //         delay(1000);
+        //         digitalWrite(LED, LOW);
+        //         delay(1000);
+        //     }
 
-    // Get first color
-    if (apds.colorAvailable() && !firstColorFound) {
+        //     forwards(5000);
+        //     stop(1000);
 
-        apds.readColor(storedR, storedG, storedB, storedA);
+        //     while (firstColor != secondColor && firstColor != 0) {
+        //         secondColor = colorDetected();
+        //         if (secondColor == firstColor){
 
-        Serial.println("\nFirst color found");
-        // print color
-        Serial.printf("RED: %d\n", storedR);
-        Serial.printf("GREEN: %d\n", storedG);
-        Serial.printf("BLUE: %d\n", storedB);
-        Serial.printf("AMBIENT: %d\n", storedA);
+        //             stop(100000);
+        //         }
+        //         else {
+        //             forwards(100);
+        //             stop(100);
+        //         }
+        //     }    
+    // int storedR, storedG, storedB, storedA; // How much red, green, and blue + (ambiguous) in first color detected
+    // int newR, newG, newB, newA; // will have values of next colors detected
+    // int resultFirst = 0;
+    // int resultSecond = 0;
 
-        if (storedR > storedG + 20 && storedR > storedB + 20) {
-            resultFirst = 1;
-            firstColorFound = true;
-        }
-        if (storedG > storedR + 20 && storedG > storedB + 20) {
-            resultFirst = 2;
-            firstColorFound = true;
-        }
-        if (storedB > storedR + 20 && storedB > storedG + 20) {
-            resultFirst = 3;
-            firstColorFound = true;
-        }
-        delay(10000);
+    // forwards(1000);
+    // stop(1000);
 
-        for (int i = 0; i < resultFirst; i++) {
-            digitalWrite(LED, HIGH);
-            delay(1000);
-            digitalWrite(LED, LOW);
-            delay(1000);
-        }
-    }
+    // // Get first color
+    // if (apds.colorAvailable() && !firstColorFound) {
 
-    // Get other colors and compare
-    if (apds.colorAvailable() && firstColorFound) {
+    //     apds.readColor(storedR, storedG, storedB, storedA);
 
-        apds.readColor(newR, newG, newB, newA);
+    //     Serial.println("\nFirst color found");
+    //     // print color
+    //     Serial.printf("RED: %d\n", storedR);
+    //     Serial.printf("GREEN: %d\n", storedG);
+    //     Serial.printf("BLUE: %d\n", storedB);
+    //     Serial.printf("AMBIENT: %d\n", storedA);
 
-        // print color
-        Serial.println("\n\nNEW COLOR FOUND:");
-        Serial.printf("RED: %d\n", newR);
-        Serial.printf("GREEN: %d\n", newG);
-        Serial.printf("BLUE: %d\n", newB);
-        Serial.printf("AMBIENT: %d\n\n", newA);
-        delay(10000);
+    //     if (storedR > storedG + 20 && storedR > storedB + 20) {
+    //         resultFirst = 1;
+    //         firstColorFound = true;
+    //     }
+    //     if (storedG > storedR + 20 && storedG > storedB + 20) {
+    //         resultFirst = 2;
+    //         firstColorFound = true;
+    //     }
+    //     if (storedB > storedR + 20 && storedB > storedG + 20) {
+    //         resultFirst = 3;
+    //         firstColorFound = true;
+    //     }
+    //     delay(10000);
 
-        if (newR > newG && newR > newB) {
-            resultSecond = 1;
-        }
-        if (newG > newR && newG > newB) {
-            resultSecond = 2;
-        }
-        if (newB > newR && newB > newG) {
-            resultSecond = 3;
-        }
-    }
+    //     for (int i = 0; i < resultFirst; i++) {
+    //         digitalWrite(LED, HIGH);
+    //         delay(1000);
+    //         digitalWrite(LED, LOW);
+    //         delay(1000);
+    //     }
+    // }
 
-    if (resultFirst == resultSecond && resultFirst != 0) {
-        Serial.println("Color found!");
-        stop(10000);
-    }
+    // // Get other colors and compare
+    // if (apds.colorAvailable() && firstColorFound) {
+
+    //     apds.readColor(newR, newG, newB, newA);
+
+    //     // print color
+    //     Serial.println("\n\nNEW COLOR FOUND:");
+    //     Serial.printf("RED: %d\n", newR);
+    //     Serial.printf("GREEN: %d\n", newG);
+    //     Serial.printf("BLUE: %d\n", newB);
+    //     Serial.printf("AMBIENT: %d\n\n", newA);
+    //     delay(10000);
+
+    //     if (newR > newG && newR > newB) {
+    //         resultSecond = 1;
+    //     }
+    //     if (newG > newR && newG > newB) {
+    //         resultSecond = 2;
+    //     }
+    //     if (newB > newR && newB > newG) {
+    //         resultSecond = 3;
+    //     }
+    // }
+
+    // if (resultFirst == resultSecond && resultFirst != 0) {
+    //     Serial.println("Color found!");
+    //     stop(10000);
+    // }
 
 }
 

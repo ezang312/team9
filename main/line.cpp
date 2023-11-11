@@ -56,4 +56,13 @@ void followLine() {
             Serial.println("Black line straight Ahead"); 
         }
     }
+    if (controller->a()) {
+        aButtonPressed = true;
+        xButtonPressed = false;
+    }
+
+    if (controller->b()) {
+        bButtonPressed = true;
+        xButtonPressed = false;
+    }
 }

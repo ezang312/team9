@@ -13,7 +13,7 @@ void mazeSetup() {
     frontIR.setFilterRate(0.1f);
 }
 
-void navigateMaze() {
+void navigateMaze(Controller controller, bool& aButtonPressed, bool& bButtonPressed, bool& xButtonPressed) {
     // Idk what this part is for, but it's in the github
     // Serial.println(frontIR.getDistanceFloat());
     // servoRight.write(1000);
@@ -51,5 +51,15 @@ void navigateMaze() {
         Serial.println("Adjust right");
         adjust("right");
         stop(10);
+    }
+    
+    if (controller->a()) {
+        aButtonPressed = true;
+        bButtonPressed = false;
+    }
+
+    if (controller->x()) {
+        xButtonPressed = true;
+        bButtonPressed = false;
     }
 }

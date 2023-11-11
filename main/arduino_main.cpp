@@ -41,52 +41,51 @@ limitations under the License.
 int firstColor = 0;
 int secondColor = 0;
 
-// GamepadPtr myGamepads[BP32_MAX_GAMEPADS];
-// bool testedGamepadConnection = false;
+GamepadPtr myGamepads[BP32_MAX_GAMEPADS];
 
 // This callback gets called any time a new gamepad is connected.
 // Up to 4 gamepads can be connected at the same time.
-// void onConnectedGamepad(GamepadPtr gp) {
-//     bool foundEmptySlot = false;
-//     for (int i = 0; i < BP32_MAX_GAMEPADS; i++) {
-//         if (myGamepads[i] == nullptr) {
-//             myGamepads[i] = gp;
-//             foundEmptySlot = true;
-//             break;
-//         }
-//     }
-//     if (!foundEmptySlot) {
-//         // Console.println("CALLBACK: Gamepad connected, but could not found empty slot");
-//     }
-// }
+void onConnectedGamepad(GamepadPtr gp) {
+    bool foundEmptySlot = false;
+    for (int i = 0; i < BP32_MAX_GAMEPADS; i++) {
+        if (myGamepads[i] == nullptr) {
+            myGamepads[i] = gp;
+            foundEmptySlot = true;
+            break;
+        }
+    }
+    if (!foundEmptySlot) {
+        // Console.println("CALLBACK: Gamepad connected, but could not found empty slot");
+    }
+}
 
-// void onDisconnectedGamepad(GamepadPtr gp) {
-//     bool foundGamepad = false;
+void onDisconnectedGamepad(GamepadPtr gp) {
+    bool foundGamepad = false;
 
-//     for (int i = 0; i < BP32_MAX_GAMEPADS; i++) {
-//         if (myGamepads[i] == gp) {
-//             // Console.printf("CALLBACK: Gamepad is disconnected from index=%d\n", i);
-//             myGamepads[i] = nullptr;
-//             foundGamepad = true;
-//             break;
-//         }
-//     }
+    for (int i = 0; i < BP32_MAX_GAMEPADS; i++) {
+        if (myGamepads[i] == gp) {
+            // Console.printf("CALLBACK: Gamepad is disconnected from index=%d\n", i);
+            myGamepads[i] = nullptr;
+            foundGamepad = true;
+            break;
+        }
+    }
 
-//     if (!foundGamepad) {
-//         // Console.println("CALLBACK: Gamepad disconnected, but not found in myGamepads");
-//     }
-// }
+    if (!foundGamepad) {
+        // Console.println("CALLBACK: Gamepad disconnected, but not found in myGamepads");
+    }
+}
 
 //ESP32SharpIR sensor1(ESP32SharpIR::GP2Y0A21YK0F, 27);
 
 // Arduino setup function. Runs in CPU 1
 void setup() {
     // Setup the Bluepad32 callbacks
-    //BP32.setup(&onConnectedGamepad, &onDisconnectedGamepad);
+    BP32.setup(&onConnectedGamepad, &onDisconnectedGamepad);
 
     // should be called when  user performs a "device factory reset", or similar
     // prevents "paired" gamepads to reconnect but might also fix connection issues
-    //BP32.forgetBluetoothKeys();
+    BP32.forgetBluetoothKeys();
 
     // lights up LED
     pinMode(LED, OUTPUT);
@@ -106,7 +105,11 @@ void setup() {
     
 }
 
-Controller controller;
+GamepadPtr myGamepad;
+
+bool aPressed = myGamepad->a();
+bool bPressed = myGamepad->b();
+bool xPressed = myGamepad->x();
 
 // Arduino loop function. Runs in CPU 1
 void loop() {
@@ -117,12 +120,14 @@ void loop() {
     
     BP32.update();
 
-    //It is safe to always do this before using the gamepad API.
-    //This guarantees that the gamepad is valid and connected.
-    // for (int i = 0; i < BP32_MAX_GAMEPADS; i++) {
-    //     GamepadPtr myGamepad = myGamepads[i];
+    
 
-    //     if (myGamepad && myGamepad->isConnected() && !testedGamepadConnection) {
+    // //It is safe to always do this before using the gamepad API.
+    // //This guarantees that the gamepad is valid and connected.
+    // for (int i = 0; i < BP32_MAX_GAMEPADS; i++) {
+    //     myGamepad = myGamepads[i];
+
+    //     if (myGamepad && myGamepad->isConnected()) {
 
     //         Serial.println("Gamepad connected!");
 
@@ -130,102 +135,90 @@ void loop() {
             
     //         //Another way to query the buttons, is by calling buttons(), or
     //         //miscButtons() which return a bitmask.
-    //         Serial.printf(
-    //             "idx=%d, dpad: 0x%02x, buttons: 0x%04x, axis L: %4d, %4d, axis R: %4d, "
-    //             "%4d, brake: %4d, throttle: %4d, misc: 0x%02x\n",
-    //             i,                        // Gamepad Index
-    //             myGamepad->dpad(),        // DPAD
-    //             myGamepad->buttons(),     // bitmask of pressed buttons
-    //             myGamepad->axisX(),       // (-511 - 512) left X Axis
-    //             myGamepad->axisY(),       // (-511 - 512) left Y axis
-    //             myGamepad->axisRX(),      // (-511 - 512) right X axis
-    //             myGamepad->axisRY(),      // (-511 - 512) right Y axis
-    //             myGamepad->brake(),       // (0 - 1023): brake button
-    //             myGamepad->throttle(),    // (0 - 1023): throttle (AKA gas) button
-    //             myGamepad->miscButtons()  // bitmak of pressed "misc" buttons
-    //         );
+    //         // Serial.printf(
+    //         //     "idx=%d, dpad: 0x%02x, buttons: 0x%04x, axis L: %4d, %4d, axis R: %4d, "
+    //         //     "%4d, brake: %4d, throttle: %4d, misc: 0x%02x\n",
+    //         //     i,                        // Gamepad Index
+    //         //     myGamepad->dpad(),        // DPAD
+    //         //     myGamepad->buttons(),     // bitmask of pressed buttons
+    //         //     myGamepad->axisX(),       // (-511 - 512) left X Axis
+    //         //     myGamepad->axisY(),       // (-511 - 512) left Y axis
+    //         //     myGamepad->axisRX(),      // (-511 - 512) right X axis
+    //         //     myGamepad->axisRY(),      // (-511 - 512) right Y axis
+    //         //     myGamepad->brake(),       // (0 - 1023): brake button
+    //         //     myGamepad->throttle(),    // (0 - 1023): throttle (AKA gas) button
+    //         //     myGamepad->miscButtons()  // bitmak of pressed "misc" buttons
+    //         // );
 
     //         //You can query the axis and other properties as well. See Gamepad.h
     //         //For all the available functions.
-    //     }
 
-    //     testedGamepadConnection = true;
-    // }
+    //         // currentBitmask = myGamepad->buttons();
 
-    //navigateMaze();
+    //         // Serial.printf("dpad: %x     ", myGamepad->dpad());
+    //         // Serial.printf("butons: %x\n", myGamepad->buttons());
 
-    // bool aPressed = controller.a();
-    // bool bPressed = controller.b();
-    // bool xPressed = controller.x();
 
-    // while (aPressed) {
-    //     Serial.println("Doing color now");
+    //         if (aPressed) {
+    //             Serial.println("Doing color now");
 
-    //     // check to see if other buttons have been pressed
-    //     bPressed = controller.b();
-    //     xPressed = controller.x();
+    //             // check to see if other buttons have been pressed
+    //             Serial.println("checking for other button pressed");
+    //             bPressed = myGamepad->b();
+    //             xPressed = myGamepad->x();
+    //             // aPressed = myGamepad->a();
 
-    //     if (bPressed || xPressed) {
-    //         aPressed = false;
-    //     }
-    // }
+    //             // Serial.print("aPressed: ");
+    //             // Serial.print(aPressed);
+    //             // Serial.print("      bPressed: ");
+    //             // Serial.print(bPressed);
+    //             // Serial.print("      xPressed: ");
+    //             // Serial.println(xPressed);
 
-    // while (bPressed) {
-    //     Serial.println("Navigating the maze now");
-        // navigateMaze();
+    //             Serial.printf("buttons: %x\n", myGamepad->buttons());
 
-    //     // check to see if other buttons have been pressed
-    //     aPressed = controller.a();
-    //     xPressed = controller.x();
 
-    //     if (aPressed || xPressed) {
-    //         xPressed = false;
-    //     }
-    // } 
+    //             if (myGamepad->b()) {
+    //                 aPressed = false;
+    //                 bPressed = true;
+    //                 break;
+    //             } else if (myGamepad->x()) {
+    //                 aPressed = false;
+    //                 xPressed = true;
+    //                 break;
+    //             }
+    //         }
+
+    //         if (bPressed) {
+    //             Serial.println("Navigating the maze now");
+    //             navigateMaze(controller, aPressed, bPressed, xPressed);
+
+    //             // check to see if other buttons have been pressed
+    //             // if (aPressed) {
+    //             //     bPressed = false;
+    //             // } else if (myGamepad->x()) {
+    //             //     xPressed = true;
+    //             //     bPressed = false;
+    //             // }
+    //         }
     
-    // while (xPressed) {
-    //     // line sensor
-    //     Serial.println("Following the line now");
-        //followLine();
-    //     // check to see if other buttons have been pressed
-    //     aPressed = controller.a();
-    //     bPressed = controller.b();
+    //         if (xPressed) {
+    //             // line sensor
+    //             Serial.println("Following the line now");
+    //             followLine(controller, aPressed, bPressed, xPressed);
+    //             // check to see if other buttons have been pressed
+    //             // aPressed = myGamepad->a();
+    //             // bPressed = myGamepad->b();
 
-    //     if (aPressed || bPressed) {
-    //         xPressed = false;
+    //             // if (aPressed || bPressed) {
+    //             //     xPressed = false;
+    //             // }
+    //         }
     //     }
+
     // }
 
-
-
-    firstColor = colorDetected();
-    Serial.printf("%d", firstColor);
-
-    // for (int i = 0; i < firstColor; i++){
-    //     digitalWrite(LED, HIGH);
-    //     delay(1000);
-    //     digitalWrite(LED, LOW);
-    //     delay(1000);
-
-    // forwards(5000);
-    // stop(1000);
-
-    // while (firstColor != secondColor && firstColor != 0) {
-    //     secondColor = colorDetected();
-    //     if (secondColor == firstColor){
-
-    //         stop(100000);
-    //     }
-    //     else {
-    //         forwards(100);
-    //         stop(100);
-    //     }
-    // }    
-
-
-
-
-
+    shoot(1000);
 
     vTaskDelay(1);
 }
